@@ -1,3 +1,7 @@
+/**
+ * Entry point of the application.
+ * Renders the main React component and sets up routing.
+ */
 import React from "react";
 import { Route, Link } from "wouter";
 import { createRoot } from "react-dom/client";

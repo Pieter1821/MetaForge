@@ -1,6 +1,10 @@
 "use server";
 
-export async function getStories() {
+/**
+ * Fetches the top stories from the Hacker News API.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of story objects.
+ */
+export async function fetchTopStories(): Promise<Array<object>> {
     const response = await fetch(
         "https://hacker-news.firebaseio.com/v0/topstories.json"
     );
@@ -11,9 +15,10 @@ export async function getStories() {
             const res = await fetch(
                 `https://hacker-news.firebaseio.com/v0/item/${storyId}.json`
             );
-            console.log('server!!!');
+            console.log("using the server !!!")
             return res.json();
         })
     );
     return stories;
 }
+
