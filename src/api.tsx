@@ -1,10 +1,12 @@
 import { eventHandler } from "vinxi/http";
+
 /**
  * Handles the API request and returns the response.
  * @param event - The event object containing the request details.
  * @returns The response object.
  */
 export default eventHandler(async (event) => {
+    console.log("Event received:", event);
     const method = event.method; 
     const path = event.path;
   
@@ -29,10 +31,10 @@ export default eventHandler(async (event) => {
 
             return stories.filter(story => story !== null);
         } catch (error) {
+            console.error("Error fetching stories:", error);
             return { error: true, message: error.toString() };
         }
     }
     
     return { test: 'on' };
 });
-

@@ -9,25 +9,15 @@ class FileRouter extends BaseFileSystemRouter {
         const path = cleanPath(src, this.config)
             .slice(1)
             .replace('index', '')
-            .replace(/\[([^\/]+)\]/g, (_, m) => {
-                if (m.length > 3 && m.startsWith('...')) {
-                    return `*${m.slice(3)}`;
-                }
-                return `:${m}`;
-            });
+            .replace(/\[([^\/]+)\]/g, (_, m) => `:${m.replace(/^\.{3}/, '*')}`);
 
         return `/${path}`;
     }
 
     toRoute(src: any) {
-        const path = this.toPath(src);
-
         return {
-            $component: {
-                src,
-                pick: ['default'],
-            },
-            path,
+            $component: { src, pick: ['default'] },
+            path: this.toPath(src),
             filePath: src,
         };
     }
@@ -36,27 +26,28 @@ class FileRouter extends BaseFileSystemRouter {
 export default createApp({
     routers: [
         {
-            type: "spa",
             name: "client",
+            type: "spa",
             handler: "./index.html",
             plugins: () => [reactPlugin(), serverFunctions.client()],
-            routes: (router, app) => {
-                return new FileRouter(
-                    { dir: resolve('./src/pages', router.root || ''), extensions: ['tsx'] }, app, router);
-            }
-        }
+            routes: (router, app) => new FileRouter({
+            dir: resolve('./src/pages', router.root || ''),
+            extensions: ['tsx']}, app, router),
+            base: "/",
+            
         },
-    {
-        type: "http",
-        name: "api",
-        handler: "./src/api.ts",
-        base: '/api'
-    },
-    serverFunctions.router(),
-    {
-        type: "static",
-        name: "static",
-        dir: "./public",
-    }
-
+        {
+            type: "http",
+            name: "api",
+            handler:"./src/api.ts",
+            base: '/api',
+        },
+        serverFunctions.router(),
+        {
+            name: "static",
+            type: "static",
+            dir: "./public",
+            base: "/",
+        },
+    ],
 });
