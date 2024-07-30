@@ -4,8 +4,16 @@ import { fetchTopStories } from "./fetchTopStories";
 /**
  * Renders a component that displays a list of top stories.
  */
+
+interface Story {
+  id: number;
+  title: string;
+  url: string;
+}
+
+
 export default function TopStories() {
-  const [stories, setStories] = useState<any[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +22,7 @@ export default function TopStories() {
      */
     const loadStories = async () => {
       const storiesData = await fetchTopStories();
-      setStories(storiesData);
+      setStories(storiesData as Story[]);
       setIsLoading(false);
     };
     loadStories();

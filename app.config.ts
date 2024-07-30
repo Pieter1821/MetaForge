@@ -23,7 +23,7 @@ class FileRouter extends BaseFileSystemRouter {
         return {
             $component: {
                 src,
-                pick: ['default']
+                pick: ['default' ]
             },
             path,
             filePath: src,
@@ -40,7 +40,7 @@ export default createApp({
             plugins: () => [reactPlugin(), serverFunctions.client()],
             routes: (router, app) => new FileRouter({
                 dir: resolve.absolute('./src/pages', router.root!),
-                extensions: ['tsx , ts']
+                extensions: ['tsx , ts , js , jsx '],
             },
                 app,
                 router,

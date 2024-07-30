@@ -6,7 +6,19 @@ import React from "react";
 import { Route, Link } from "wouter";
 import { createRoot } from "react-dom/client";
 import { Counter } from "./counter";
-import TopStories from "./TopStories";
+
+import { lazyRoute } from "@vinxi/react";
+import { getManifest } from "vinxi/manifest";
+import fileRoutes from "vinxi/routes";
+
+const routes = fileRoutes.map((route) => ({
+  ...route,
+  component: lazyRoute(
+    route.$component,
+    getManifest("client"),
+    getManifest("client")
+  ),
+}));
 
 createRoot(document.getElementById("root")!).render(
   <>
@@ -17,15 +29,14 @@ createRoot(document.getElementById("root")!).render(
       alt="MetaMask Logo"
     />
     <nav>
+      {routes.map((route) => (
+        <Link to={route.path}>{route.path}</Link>
+      ))}
       <Link to="/">Home</Link>
-      <Link href="/stories">Stories</Link>
+      <Link to="/Stories">Stories</Link>
     </nav>
-    <Route path="/">
-      <h1>Hello, MetaForge!!!</h1>
-      <Counter />
-    </Route>
-    <Route path="/stories">
-      <TopStories />
-    </Route>
+    {routes.map((route) => (
+      <Route path={route.path} component={route.component} />
+    ))}
   </>
 );

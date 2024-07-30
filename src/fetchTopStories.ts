@@ -10,15 +10,20 @@ export async function fetchTopStories(): Promise<Array<object>> {
     );
 
     const storyIds = await response.json();
+    console.log("using the server !!!");
+
+    // Fetch stories in batches to reduce the number of network requests
+    const fetchStory = async (storyId: number) => {
+        const res = await fetch(
+            `https://hacker-news.firebaseio.com/v0/item/${storyId}.json`
+        );
+        return res.json();
+    };
+
+   
     const stories = await Promise.all(
-        storyIds.slice(0, 20).map(async (storyId: number) => {
-            const res = await fetch(
-                `https://hacker-news.firebaseio.com/v0/item/${storyId}.json`
-            );
-            console.log("using the server !!!")
-            return res.json();
-        })
+        storyIds.slice(0, 40).map(fetchStory)
     );
+
     return stories;
 }
-
